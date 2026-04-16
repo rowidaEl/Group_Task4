@@ -60,13 +60,23 @@ public:
         return false; // placeholder
     }
 
-    // Check if any word starts with the given prefix
+// Check if any word starts with the given prefix
     // Input: prefix to check (string)
     // Output: boolean indicating if any word has this prefix
     // Purpose: Verify if the prefix exists in the Trie (doesn't need to be a complete word)
     bool startsWith(string prefix) {
-        // TODO: Implement this function
-        return false; // placeholder
+        TrieNode* current = root; 
+        
+        for (char ch : prefix) {
+            int index = ch - 'a'; 
+            
+            if (current->children[index] == nullptr) {
+                return false; 
+            }
+            current = current->children[index]; 
+        }
+        
+        return true; 
     }
 
     // Get all words that start with the given prefix
