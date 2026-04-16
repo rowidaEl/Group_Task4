@@ -32,6 +32,17 @@ private:
     // Purpose: Recursively find all complete words starting from the given node
     void findAllWords(TrieNode* node, string currentWord, vector<string>& results) {
         // TODO: Implement this function
+        if(node->isEndOfWord)
+        {
+            results.push_back(currentWord);
+        }
+        for( int i = 0 ; i < 26 ; i++)
+        {
+            if(node->children[i] != nullptr)
+            {
+                findAllWords(node->children[i],currentWord + char('a' + i),results);
+            }
+        }
     }
 
 public:
@@ -41,6 +52,7 @@ public:
     // Purpose: Initialize the Trie with a root node
     Trie() {
         // TODO: Implement this function
+        root = new TrieNode();
     }
 
     // Insert a word into the Trie
@@ -49,6 +61,31 @@ public:
     // Purpose: Add a word to the Trie by creating nodes for each character
     void insert(string word) {
         // TODO: Implement this function
+        TrieNode* current = root;
+        for(char c : word)
+        {
+
+            int index;
+        if(isupper(c))
+        {
+
+            index = c - 'A';
+        }
+        else{
+              index = c - 'a';
+        }
+
+
+           // int index = tolower(c) - 'a';
+            if(index < 0 || index >= 26)
+                continue;
+            if(current->children[index] == nullptr)
+            {
+                current->children[index] = new TrieNode();
+            }
+            current = current->children[index];
+        }
+        current->isEndOfWord = true;
     }
 
     // Search for a word in the Trie
@@ -57,16 +94,54 @@ public:
     // Purpose: Check if the complete word exists in the Trie
     bool search(string word) {
         // TODO: Implement this function
-        return false; // placeholder
+         TrieNode* current = root;
+
+    for (char c : word) {
+            int index;
+        if(isupper(c))
+        {
+
+            index = c - 'A';
+        }
+        else{
+              index = c - 'a';
+        }
+
+
+        if( c < 'a' || c > 'z')
+            return false;
+         c = tolower(c);
+        //if character path doesn't exist then word not found
+        if (current->children[index] == nullptr) {
+            return false;
+        }
+
+        //move to the next node
+        current = current->children[index];
     }
 
-    // Check if any word starts with the given prefix
+    //return true only if it's the end of a word
+    return current->isEndOfWord;
+    }
+
+// Check if any word starts with the given prefix
     // Input: prefix to check (string)
     // Output: boolean indicating if any word has this prefix
     // Purpose: Verify if the prefix exists in the Trie (doesn't need to be a complete word)
     bool startsWith(string prefix) {
-        // TODO: Implement this function
-        return false; // placeholder
+        TrieNode* current = root;
+
+        for (char ch : prefix) {
+
+            int index = ch - 'a';
+
+            if (current->children[index] == nullptr) {
+                return false;
+            }
+            current = current->children[index];
+        }
+
+        return true;
     }
 
     // Get all words that start with the given prefix
@@ -75,7 +150,23 @@ public:
     // Purpose: Find all complete words that begin with the given prefix
     vector<string> autocomplete(string prefix) {
         vector<string> suggestions;
-        // TODO: Implement this function
+
+        // Navigate to the end of the prefix path (same traversal as startsWith)
+        TrieNode* current = root;
+        for (char c : prefix) {
+            int index = c - 'a';
+
+            // If any character in the prefix has no child node, return empty vector
+            if (current->children[index] == nullptr) {
+                return suggestions;
+            }
+            current = current->children[index];
+        }
+
+        // Once at the end-of-prefix node, call findAllWords with the prefix as initial currentWord
+        findAllWords(current, prefix, suggestions);
+
+        // Return the populated suggestions vector
         return suggestions;
     }
 };
