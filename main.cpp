@@ -57,7 +57,22 @@ public:
     // Purpose: Check if the complete word exists in the Trie
     bool search(string word) {
         // TODO: Implement this function
-        return false; // placeholder
+         TrieNode* current = root;
+
+    for (char c : word) {
+        int index = c - 'a';
+
+        //if character path doesn't exist then word not found
+        if (current->children[index] == nullptr) {
+            return false;
+        }
+
+        //move to the next node
+        current = current->children[index];
+    }
+
+    //return true only if it's the end of a word
+    return current->isEndOfWord;
     }
 
     // Check if any word starts with the given prefix
