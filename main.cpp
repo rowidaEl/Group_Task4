@@ -31,7 +31,20 @@ private:
     // Output: none (modifies results vector by reference)
     // Purpose: Recursively find all complete words starting from the given node
     void findAllWords(TrieNode* node, string currentWord, vector<string>& results) {
-        // TODO: Implement this function
+        // Step 1: Check for word completion
+        if (node->isEndOfWord) {
+            results.push_back(currentWord);
+        }
+        
+        // Step 2: Recurse into every existing child
+        for (int i = 0; i < 26; i++) {
+            if (node->children[i] != nullptr) {
+                findAllWords(node->children[i], currentWord + char('a' + i), results);
+            }
+        }
+        
+        // Step 3: Base case is implicit — when no children exist,
+        // the for loop does nothing and the recursion unwinds naturally
     }
 
 public:
@@ -75,7 +88,23 @@ public:
     // Purpose: Find all complete words that begin with the given prefix
     vector<string> autocomplete(string prefix) {
         vector<string> suggestions;
-        // TODO: Implement this function
+        
+        // Navigate to the end of the prefix path (same traversal as startsWith)
+        TrieNode* current = root;
+        for (char c : prefix) {
+            int index = c - 'a';
+            
+            // If any character in the prefix has no child node, return empty vector
+            if (current->children[index] == nullptr) {
+                return suggestions;
+            }
+            current = current->children[index];
+        }
+        
+        // Once at the end-of-prefix node, call findAllWords with the prefix as initial currentWord
+        findAllWords(current, prefix, suggestions);
+        
+        // Return the populated suggestions vector
         return suggestions;
     }
 };
