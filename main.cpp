@@ -31,20 +31,18 @@ private:
     // Output: none (modifies results vector by reference)
     // Purpose: Recursively find all complete words starting from the given node
     void findAllWords(TrieNode* node, string currentWord, vector<string>& results) {
-        // Step 1: Check for word completion
-        if (node->isEndOfWord) {
+        // TODO: Implement this function
+        if(node->isEndOfWord)
+        {
             results.push_back(currentWord);
         }
-        
-        // Step 2: Recurse into every existing child
-        for (int i = 0; i < 26; i++) {
-            if (node->children[i] != nullptr) {
-                findAllWords(node->children[i], currentWord + char('a' + i), results);
+        for( int i = 0 ; i < 26 ; i++)
+        {
+            if(node->children[i] != nullptr)
+            {
+                findAllWords(node->children[i],currentWord + char('a' + i),results);
             }
         }
-        
-        // Step 3: Base case is implicit — when no children exist,
-        // the for loop does nothing and the recursion unwinds naturally
     }
 
 public:
@@ -54,6 +52,7 @@ public:
     // Purpose: Initialize the Trie with a root node
     Trie() {
         // TODO: Implement this function
+        root = new TrieNode();
     }
 
     // Insert a word into the Trie
@@ -62,6 +61,19 @@ public:
     // Purpose: Add a word to the Trie by creating nodes for each character
     void insert(string word) {
         // TODO: Implement this function
+        TrieNode* current = root;
+        for(char c : word)
+        {
+            int index = tolower(c) - 'a';
+            if(index < 0 || index >= 26)
+                continue;
+            if(current->children[index] == nullptr)
+            {
+                current->children[index] = new TrieNode();
+            }
+            current = current->children[index];
+        }
+        current->isEndOfWord = true;
     }
 
     // Search for a word in the Trie
